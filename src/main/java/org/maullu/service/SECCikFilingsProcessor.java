@@ -23,7 +23,7 @@ public class SECCikFilingsProcessor {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
-                if (parts.length == 2) {
+                if (parts.length >= 2) {
                     SECCikIndex data = new SECCikIndex();
                     data.setCikStr(String.format("%010d", Integer.parseInt(parts[0])));
                     data.setTitle(parts[1]);

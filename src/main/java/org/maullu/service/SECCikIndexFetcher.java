@@ -15,9 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SECCikIndexFetcher {
+    private final String baseUrl;
+
+    public SECCikIndexFetcher(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
     public List<SECCikIndex> fetchSECCikData() throws IOException {
         List<SECCikIndex> dataItems = new ArrayList<>();
-        String url = "https://www.sec.gov/files/company_tickers.json";
+        String url = this.baseUrl + "files/company_tickers.json";
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet request = new HttpGet(url);
             request.setHeader("User-Agent", System.getProperty("user.agent"));
@@ -26,10 +31,11 @@ public class SECCikIndexFetcher {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode rootNode = mapper.readTree(response.getEntity().getContent());
                 rootNode.forEach(node -> {
-                    SECCikIndex ticker = new SECCikIndex();
-                    ticker.setCikStr(node.get("cik_str").asText());
-                    ticker.setTitle(node.get("title").asText());
-                    dataItems.add(ticker);
+                    SECCikIndex cikIndex = new SECCikIndex();
+                    cikIndex.setCikStr(node.get("cik_str").asText());
+                    cikIndex.setTitle(node.get("title").asText());
+                    cikIndex.setTicker(node.get("ticker").asText());
+                    dataItems.add(cikIndex);
                 });
             }
         }
@@ -39,7 +45,7 @@ public class SECCikIndexFetcher {
     public void saveDataToFile(List<SECCikIndex> dataItems, String filePath) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (SECCikIndex item : dataItems) {
-                writer.write(item.getCikStr() + "|" + item.getTitle());
+                writer.write(item.getCikStr() + "|" + item.getTitle() + "|" + item.getTicker());
                 writer.newLine();
             }
         }

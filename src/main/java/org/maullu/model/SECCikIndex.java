@@ -6,4 +6,5 @@ import lombok.Data;
 public class SECCikIndex {
     private String cikStr;
     private String title;
+    private String ticker;
 }

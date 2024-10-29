@@ -10,7 +10,7 @@ import java.util.List;
 public class SECCIkIndexRetriever {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(SECCIkIndexRetriever.class);
     public static void main(String[] args) {
-        SECCikIndexFetcher fetcher = new SECCikIndexFetcher();
+        SECCikIndexFetcher fetcher = new SECCikIndexFetcher("https://www.sec.gov/");
         try {
             List<SECCikIndex> dataItems = fetcher.fetchSECCikData();
             fetcher.saveDataToFile(dataItems, "output.txt");
