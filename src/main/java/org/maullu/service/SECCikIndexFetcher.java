@@ -2,6 +2,7 @@ package org.maullu.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class SECCikIndexFetcher {
     private final String baseUrl;
 
@@ -31,6 +33,7 @@ public class SECCikIndexFetcher {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode rootNode = mapper.readTree(response.getEntity().getContent());
                 rootNode.forEach(node -> {
+                    log.debug("Processing node: {}", node);
                     SECCikIndex cikIndex = new SECCikIndex();
                     cikIndex.setCikStr(node.get("cik_str").asText());
                     cikIndex.setTitle(node.get("title").asText());
