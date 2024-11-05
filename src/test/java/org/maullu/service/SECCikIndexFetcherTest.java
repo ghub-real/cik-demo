@@ -21,7 +21,7 @@ public class SECCikIndexFetcherTest {
 
     @BeforeAll
     public static void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(0));
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
         wireMockServer.start();
         WireMock.configureFor("localhost", wireMockServer.port());
     }
