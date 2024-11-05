@@ -27,3 +27,6 @@ replay_pid*
 /target/
 /output_files/
 /sample_output_files/
+/.idea/modules.xml
+/.idea/misc.xml
+/.idea/vcs.xml
