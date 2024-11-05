@@ -21,9 +21,9 @@ public class SECCikIndexFetcherTest {
 
     @BeforeAll
     public static void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(8080));
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(0));
         wireMockServer.start();
-        WireMock.configureFor("localhost", 8080);
+        WireMock.configureFor("localhost", wireMockServer.port());
     }
 
     @AfterAll
@@ -44,7 +44,7 @@ public class SECCikIndexFetcherTest {
         System.setProperty("user.agent", "TestAgent");
 
         // Create an instance of SECCikIndexFetcher and call fetchSECCikData
-        SECCikIndexFetcher fetcher = new SECCikIndexFetcher("http://localhost:8080/");
+        SECCikIndexFetcher fetcher = new SECCikIndexFetcher("http://localhost:" + wireMockServer.port() + "/");
         List<SECCikIndex> dataItems = fetcher.fetchSECCikData();
 
         // Verify the results
