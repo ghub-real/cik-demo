@@ -1,11 +1,11 @@
 package org.maullu.service;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.maullu.model.SECCikIndex;
 
 import java.io.IOException;
@@ -17,24 +17,20 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SECCikIndexFetcherTest {
-    private static WireMockServer wireMockServer;
+    @RegisterExtension
+    static WireMockExtension wireMockExt = WireMockExtension.newInstance().options(WireMockConfiguration.wireMockConfig().dynamicPort()).build();
 
-    @BeforeAll
-    public static void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
-        wireMockServer.start();
-        WireMock.configureFor("localhost", wireMockServer.port());
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        wireMockServer.stop();
+    @BeforeEach
+    public void setUp() {
+        System.clearProperty("user.agent");
+        WireMock.configureFor("localhost", wireMockExt.getPort());
     }
 
     @Test
     public void testFetchSECCikData() throws IOException {
         // Mock the SEC endpoint
         String jsonResponse = "[{\"cik_str\":\"0001550453\",\"title\":\"TriLinc Global Impact Fund LLC\",\"ticker\":\"TRLC\"}]";
+        WireMock.configureFor("localhost", wireMockExt.getPort());
         WireMock.stubFor(WireMock.get(urlEqualTo("/files/company_tickers.json"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
@@ -44,7 +40,7 @@ public class SECCikIndexFetcherTest {
         System.setProperty("user.agent", "TestAgent");
 
         // Create an instance of SECCikIndexFetcher and call fetchSECCikData
-        SECCikIndexFetcher fetcher = new SECCikIndexFetcher("http://localhost:" + wireMockServer.port() + "/");
+        SECCikIndexFetcher fetcher = new SECCikIndexFetcher("http://localhost:" + wireMockExt.getPort() + "/");
         List<SECCikIndex> dataItems = fetcher.fetchSECCikData();
 
         // Verify the results
